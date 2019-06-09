@@ -1,5 +1,5 @@
 #!/bin/bash
 
 chmod u-x ./bin/*
-git pull
+git --git-dir=~/.bash/git-scripts/.git pull
 chmod u+x ./bin/*
