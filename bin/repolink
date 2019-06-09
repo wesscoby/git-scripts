@@ -20,5 +20,3 @@ else
     echo "ERROR: Remote Repository Link NOT Provided!";
     exit 0;
 fi
-
-
