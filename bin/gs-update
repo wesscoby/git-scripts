@@ -1,5 +1,7 @@
 #!/bin/bash
+### Git Prefix
+prefix="--git-dir=$HOME/.bash/git-scripts/.git"
 
 chmod u-x ./bin/*
-git --git-dir=~/.bash/git-scripts/.git pull
+git ${prefix} pull
 chmod u+x ./bin/*
