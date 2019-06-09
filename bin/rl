@@ -6,11 +6,23 @@
 #: Version:         1.0.0
 #: Description:     Adding a remote link to a local repo and pushing committed files
 
-# Begin Scripting
 
 ### Git Prefix specifying the current working directory
 prefix="--git-dir=$PWD/.git"
 
+#===========================================================================================
+#========================            HELPER FUNCTIONS            ===========================
+#===========================================================================================
+
+### Check if a file (or directory [or path] ) exists [in the current working directory]
+fileExists() {
+    if [[ -e "$PWD/$1" ]];
+    then
+        echo true;
+    else
+        echo false;
+    fi
+}
 
 if [[ -n $1 ]]; then
     git ${prefix} remote add origin $1;
