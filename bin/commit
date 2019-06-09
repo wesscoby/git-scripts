@@ -1,0 +1,172 @@
+#!/bin/bash
+
+# Title       : commit
+# Date        : 16.05.2019
+# Author      : WessCoby <cobygiven@gmail.com>
+# Version     : 1.0.2
+# Description : A simple bash script to aid in staging and committing files to git
+# Options     : None
+
+### Git Prefix specifying the current working directory
+prefix="--git-dir=$PWD/.git"
+
+### Text Style and Color formatting
+black_on_red_bold="\033[1;30;41m"
+white_on_red_bold="\033[1;37;41m"
+red_on_white="\033[31;47m"
+red_on_blue="\033[31;44m"
+red_bold="\033[1;31m"
+blue_bold="\033[1;34m"
+none="\033[0m"
+
+#===========================================================================================
+#========================            HELPER FUNCTIONS            ===========================
+#===========================================================================================
+
+### check if a file (or directory [or path] ) exists [in the current working directory]
+fileExists() {
+    if [[ -e "$PWD/$1" ]];
+    then
+        echo true;
+    else
+        echo false;
+    fi
+}
+
+### prompt for boolean response
+confirm() {
+    shopt -s nocasematch # turn on case insensitive matching
+    if [[ "$1" =~ ^y(es)?$ ]];
+    then
+        echo true;
+    elif [[ "$1" =~ ^no?$ ]];
+    then
+        echo false;
+    else
+    echo none;
+    fi
+    shopt -u nocasematch # turn off case insensitive matching
+}
+
+#===========================================================================================
+#========================            MAIN FUNCTIONS            =============================
+#===========================================================================================
+
+### check and initialize (on confirmation) the current working directory as a repo
+initRepo() {
+    read -r -p "Initialize Git Repository? [ Y/N ]: " response;
+    if [[ $(confirm "$response") == "true" ]];  then
+        git ${prefix} init      # Initialize Repository
+        handleArgs $@
+    elif [[ $(confirm "$response") == "false" ]];  then
+        printf "\n${blue_bold}Repository is NOT Initialized.\nFiles NOT Committed.\nGoodbye!!!${none}\n\n";
+        exit 1;
+    else
+        echo -e "${red_bold}Invalid Response. Try Again!!!${none}";
+        initRepo $@
+    fi
+}
+
+### working with arguments provided at the call of the commit script
+handleArgs() {
+    # if no argument is passed
+    if [[ $# == 0 ]];  then
+        echo "";
+        # prompt user to confirm staging and committing everything in the directory
+        read -r -p "Commit Everything? [Y/N]: " response
+        echo "";
+
+        if [[ $(confirm "$response") == "true" ]];  then
+        git ${prefix} add . && git ${prefix} status; # Stage all files and check status
+        commit;
+        elif [[ $(confirm "$response") == "false" ]];   then
+            # prompt user to add files to be staged and committed
+            read -r -p "Add Files [ Enter names of files and folders ]: " selected_files;
+            handleArgs ${selected_files}  # invoke handleArgs again with user input as arguments
+        else
+            echo -e "${red_bold}Invalid Response. Try Again!!!${none}";
+            handleArgs $@   # invoke handleArgs again with the initial arguments provided
+        fi
+
+    # if one argument is passed
+    elif [[ $# == 1 ]];  then
+        # if argument passed is "."
+        if [[ $1 == "." ]]; then
+            git ${prefix} add . && git ${prefix} status; # Stage all files and check status
+            commit;
+        else
+            stageFiles $1   # stage the single specified file
+        fi
+
+    # if more than one argument is passed
+    elif [[ $# -gt 1 ]];  then
+        stageFiles $@;
+    fi
+}
+
+
+### handle staging
+stageFiles() {
+    declare -a existing_files           # indexed array for existing files
+    declare -a nonexistent_files        # indexed array for nonexistent files
+
+    # If only one argument
+    if [[ $# == 1 ]];  then
+        if [[ $(fileExists "$1") == "true" ]];  then
+            git ${prefix} add $1 && git ${prefix} status; # Stage file and check status
+            commit;
+        else
+            printf  "\n${white_on_red_bold} ERROR ${none} ${red_bold}'%s' NOT found in directory. Check Path or Filename. ${none}\n\n" "$1";
+            handleArgs
+        fi
+    else
+        # More than one argument
+        for file in "$@"
+        do
+            if [[ $(fileExists "$file") == "true" ]];  then
+                existing_files+=("$file");      # Add file to array of existent files.
+                git ${prefix} add "${file}";    # Stage file
+            else
+                nonexistent_files+=("$file");  # Add file to array of nonexistent files.
+            fi
+        done
+
+        if [[ "${#nonexistent_files[@]}" -ne 0 ]];  then
+                printf  "\n${white_on_red_bold} ERROR ${none} ${red_bold} [ %s ] NOT found in directory. Check Path(s) or Filename(s). ${none}\n\n" "${nonexistent_files[*]}";
+                git ${prefix} status; # Check status
+        fi
+
+        if [[ "${#existing_files[@]}" -ge 1 ]];  then
+            git ${prefix} status; # Check status
+            commit
+        else
+            handleArgs
+        fi
+    fi
+}
+
+### Commit files
+commit() {
+    ## Prompt for commit message
+    read -r -p "Commit message: " message
+    ## Track file deletes
+     git ${prefix} add -u
+
+    # Committing
+     git ${prefix} commit -m "$message"
+}
+
+#===========================================================================================
+#==============================            START            ================================
+#===========================================================================================
+
+### Check if current directory is a git repository
+if [[ $(fileExists ".git") == "true" ]];
+then
+    handleArgs $@
+else
+    printf "${blue_bold}%s${none}\n" "This Directory is not a Git repository";
+    initRepo $@
+fi
+### Done
+exit 0

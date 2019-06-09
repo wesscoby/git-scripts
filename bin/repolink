@@ -1,0 +1,24 @@
+#!/bin/bash
+
+#: Title:           repolink
+#: Date:            Mon Jun  3 14:59:15 DST 2019
+#: Author:          WessCoby
+#: Version:         1.0.0
+#: Description:     Adding a remote link to a local repo and pushing committed files
+
+# Begin Scripting
+
+### Git Prefix specifying the current working directory
+prefix="--git-dir=$PWD/.git"
+
+
+if [[ -n $1 ]]; then
+    git ${prefix} remote add origin $1;
+    git push -u origin master;
+    exit 0;
+else
+    echo "ERROR: Remote Repository Link NOT Provided!";
+    exit 0;
+fi
+
+
