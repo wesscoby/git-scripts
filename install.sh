@@ -6,5 +6,6 @@ printf "\n\n# Export Git Scripts Source Folder\nexport PATH=\$PATH:~/.bash/git-s
 ### Ensure files in ./bin are executable
 chmod u+x ./bin/*
 
-### Reload Bash
-source ~/.bashrc
+### Remove executable permission on this file
+chmod u-x ./install.sh
+
