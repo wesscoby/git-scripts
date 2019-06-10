@@ -7,7 +7,7 @@
 #: Description:     Git status command
 
 ### Git Prefix specifying the current working directory
-prefix="--git-dir=$PWD/.git"
+gitDirectoryPath="$PWD"
 
 
 ### Text Style and Color formatting
@@ -31,7 +31,7 @@ fileExists() {
 
 
 status() {
-    git ${prefix} status
+    git -C ${gitDirectoryPath} status
 }
 
 #==========================================================================================
