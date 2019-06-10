@@ -8,27 +8,26 @@
 
 
 ### Git Prefix specifying the current working directory
-prefix="--git-dir=$PWD/.git"
+prefix="$PWD"
 
 #===========================================================================================
-#========================            HELPER FUNCTIONS            ===========================
+#=========================                START                  ===========================
 #===========================================================================================
 
-### Check if a file (or directory [or path] ) exists [in the current working directory]
-fileExists() {
-    if [[ -e "$PWD/$1" ]];
-    then
-        echo true;
+### Check if current directory is a git repository
+if [[ $(fe ".git") == "true" ]];
+then
+    if [[ -n $1 ]]; then
+        git -C ${prefix} remote add origin $1;
+        git -C ${prefix} push -u origin master;
+        exit 0;
     else
-        echo false;
+        errlog "Remote Repository Link NOT Provided";
+        exit 0;
     fi
-}
-
-if [[ -n $1 ]]; then
-    git ${prefix} remote add origin $1;
-    git push -u origin master;
-    exit 0;
 else
-    echo "ERROR: Remote Repository Link NOT Provided!";
+    errlog "This Directory is not a Git repository";
     exit 0;
 fi
+
+
