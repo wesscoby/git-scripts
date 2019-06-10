@@ -8,7 +8,7 @@
 # Options     : None
 
 ### Git Prefix specifying the current working directory
-prefix="--git-dir=$PWD/.git"
+prefix="$PWD"
 
 ### Text Style and Color formatting
 black_on_red_bold="\033[1;30;41m"
@@ -22,16 +22,6 @@ none="\033[0m"
 #===========================================================================================
 #========================            HELPER FUNCTIONS            ===========================
 #===========================================================================================
-
-### check if a file (or directory [or path] ) exists [in the current working directory]
-fileExists() {
-    if [[ -e "$PWD/$1" ]];
-    then
-        echo true;
-    else
-        echo false;
-    fi
-}
 
 ### prompt for boolean response
 confirm() {
@@ -56,13 +46,13 @@ confirm() {
 initRepo() {
     read -r -p "Initialize Git Repository? [ Y/N ]: " response;
     if [[ $(confirm "$response") == "true" ]];  then
-        git ${prefix} init      # Initialize Repository
+        git -C ${prefix} init      # Initialize Repository
         handleArgs $@
     elif [[ $(confirm "$response") == "false" ]];  then
         printf "\n${blue_bold}Repository is NOT Initialized.\nFiles NOT Committed.\nGoodbye!!!${none}\n\n";
         exit 1;
     else
-        echo -e "${red_bold}Invalid Response. Try Again!!!${none}";
+        errlog "$Invalid Response. Try Again!!!";
         initRepo $@
     fi
 }
@@ -77,7 +67,7 @@ handleArgs() {
         echo "";
 
         if [[ $(confirm "$response") == "true" ]];  then
-        git ${prefix} add . && git ${prefix} status; # Stage all files and check status
+        git -C ${prefix} add . && git -C ${prefix} status; # Stage all files and check status
         commit;
         elif [[ $(confirm "$response") == "false" ]];   then
             # prompt user to add files to be staged and committed
@@ -92,7 +82,7 @@ handleArgs() {
     elif [[ $# == 1 ]];  then
         # if argument passed is "."
         if [[ $1 == "." ]]; then
-            git ${prefix} add . && git ${prefix} status; # Stage all files and check status
+            git -C ${prefix} add . && git -C ${prefix} status; # Stage all files and check status
             commit;
         else
             stageFiles $1   # stage the single specified file
@@ -112,32 +102,32 @@ stageFiles() {
 
     # If only one argument
     if [[ $# == 1 ]];  then
-        if [[ $(fileExists "$1") == "true" ]];  then
-            git ${prefix} add $1 && git ${prefix} status; # Stage file and check status
+        if [[ $(fe "$1") == "true" ]];  then
+            git -C ${prefix} add $1 && git -C ${prefix} status; # Stage file and check status
             commit;
         else
-            printf  "\n${white_on_red_bold} ERROR ${none} ${red_bold}'%s' NOT found in directory. Check Path or Filename. ${none}\n\n" "$1";
+            errlog  "'$1' NOT found in directory. Check Path or Filename. ${none}\n\n";
             handleArgs
         fi
     else
         # More than one argument
         for file in "$@"
         do
-            if [[ $(fileExists "$file") == "true" ]];  then
+            if [[ $(fe "$file") == "true" ]];  then
                 existing_files+=("$file");      # Add file to array of existent files.
-                git ${prefix} add "${file}";    # Stage file
+                git -C ${prefix} add "${file}";    # Stage file
             else
                 nonexistent_files+=("$file");  # Add file to array of nonexistent files.
             fi
         done
 
         if [[ "${#nonexistent_files[@]}" -ne 0 ]];  then
-                printf  "\n${white_on_red_bold} ERROR ${none} ${red_bold} [ %s ] NOT found in directory. Check Path(s) or Filename(s). ${none}\n\n" "${nonexistent_files[*]}";
-                git ${prefix} status; # Check status
+                errlog  "[ ${nonexistent_files[*]} ] NOT found in this directory. Check Path(s) or Filename(s)";
+                git -C ${prefix} status; # Check status
         fi
 
         if [[ "${#existing_files[@]}" -ge 1 ]];  then
-            git ${prefix} status; # Check status
+            git -C ${prefix} status; # Check status
             commit
         else
             handleArgs
@@ -150,10 +140,10 @@ commit() {
     ## Prompt for commit message
     read -r -p "Commit message: " message
     ## Track file deletes
-     git ${prefix} add -u
+     git -C ${prefix} add -u
 
     # Committing
-     git ${prefix} commit -m "$message"
+     git -C ${prefix} commit -m "$message"
 }
 
 #===========================================================================================
@@ -161,11 +151,11 @@ commit() {
 #===========================================================================================
 
 ### Check if current directory is a git repository
-if [[ $(fileExists ".git") == "true" ]];
+if [[ $(fe ".git") == "true" ]];
 then
     handleArgs $@
 else
-    printf "${blue_bold}%s${none}\n" "This Directory is not a Git repository";
+    errlog "This Directory is not a Git repository";
     initRepo $@
 fi
 ### Done

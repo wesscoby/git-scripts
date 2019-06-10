@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#: Title:           fe
+#: Date:            Mon Jun 10 11:33:18 DST 2019
+#: Author:          [Your name]
+#: Version:         1.0.0
+#: Description:     Short for File Exists. Check if a file (or directory [or path] ) exists [in the current working directory]
+
+
+if [[ -e "$PWD/$1" ]];
+then
+    echo true;
+else
+    echo false;
+fi

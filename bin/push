@@ -7,31 +7,15 @@
 #: Description:     Push command simplified
 
 ### Git Prefix specifying the current working directory
-prefix="--git-dir=$PWD/.git"
-
-
-### Text Style and Color formatting
-bldred="\033[1;31m"
-none="\033[0m"
-
+prefix="$PWD"
 
 #===========================================================================================
 #========================            HELPER FUNCTIONS            ===========================
 #===========================================================================================
 
-### Check if a file (or directory [or path] ) exists [in the current working directory]
-fileExists() {
-    if [[ -e "$PWD/$1" ]];
-    then
-        echo true;
-    else
-        echo false;
-    fi
-}
-
 ### Git Push Command
 push() {
-    git ${prefix} push origin $1
+    git -C ${prefix} push origin $1
 }
 
 
@@ -40,7 +24,7 @@ push() {
 #==========================================================================================
 
 ### Check if current directory is a git repository
-if [[ $(fileExists ".git") == "true" ]];
+if [[ $(fe ".git") == "true" ]];
 then
     if [[ -n $1 ]]; then
         push $1;        # push to specified branch
@@ -50,7 +34,7 @@ then
         exit 0;
     fi
 else
-    printf "${bldred}%s${none}\n" "This Directory is not a Git repository";
+    errlog "This Directory is not a Git repository";
     exit 0;
 fi
 

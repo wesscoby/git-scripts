@@ -10,25 +10,9 @@
 gitDirectoryPath="$PWD"
 
 
-### Text Style and Color formatting
-bldred="\033[1;31m"
-none="\033[0m"
-
-
 #===========================================================================================
 #========================            HELPER FUNCTIONS            ===========================
 #===========================================================================================
-
-### Check if a file (or directory [or path] ) exists [in the current working directory]
-fileExists() {
-    if [[ -e "$PWD/$1" ]];
-    then
-        echo true;
-    else
-        echo false;
-    fi
-}
-
 
 status() {
     git -C ${gitDirectoryPath} status
@@ -39,7 +23,7 @@ status() {
 #==========================================================================================
 
 ### Check if current directory is a git repository
-if [[ $(fileExists ".git") == "true" ]];
+if [[ $(fe ".git") == "true" ]];
 then
     status;
 else
