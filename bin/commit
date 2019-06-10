@@ -106,7 +106,7 @@ stageFiles() {
             git -C ${prefix} add $1 && git -C ${prefix} status; # Stage file and check status
             commit;
         else
-            errlog  "'$1' NOT found in directory. Check Path or Filename. ${none}\n\n";
+            errlog  "'$1' NOT found in directory. Check Path or Filename";
             handleArgs
         fi
     else
@@ -123,13 +123,13 @@ stageFiles() {
 
         if [[ "${#nonexistent_files[@]}" -ne 0 ]];  then
                 errlog  "[ ${nonexistent_files[*]} ] NOT found in this directory. Check Path(s) or Filename(s)";
-                git -C ${prefix} status; # Check status
         fi
 
         if [[ "${#existing_files[@]}" -ge 1 ]];  then
             git -C ${prefix} status; # Check status
             commit
         else
+            git -C ${prefix} status; # Check status
             handleArgs
         fi
     fi
