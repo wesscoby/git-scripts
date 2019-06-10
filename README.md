@@ -1,2 +1,2 @@
-# git-scripts
+### Git Scripts
 Git Scripts to simplify using Git
