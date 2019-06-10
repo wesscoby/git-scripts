@@ -1,0 +1,23 @@
+#!/bin/bash
+
+#: Title:           erlog.sh
+#: Date:            Mon Jun 10 10:48:01 DST 2019
+#: Author:          [Your name]
+#: Version:         1.0.0
+#: Description:     A script to log errors to stdout
+
+### Text style and color formatting
+bold="\033[1m"
+white="\033[37m"
+black="\033[30m"
+red="\033[31m"
+bgRed="\033[41m"
+bgGreen="\033[42m"
+reset_formatting="\033[0m"
+
+
+if [[ -n $1 ]]; then
+    printf "${bold}${white}${bgRed} ERROR: ${reset_formatting}${bold}${red} %s! ${reset_formatting}\n" "$1";
+else
+    exit 0;
+fi

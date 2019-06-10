@@ -43,7 +43,7 @@ if [[ $(fileExists ".git") == "true" ]];
 then
     status;
 else
-    printf "${bldred}%s${none}\n" "This Directory is not a Git repository";
+    ../erlog.sh "This Directory is not a Git repository";
     exit 0;
 fi
 
