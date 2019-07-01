@@ -61,10 +61,11 @@ $ commit .
 
 ### [RL (Remote Link)](./bin/rl)
 One of the known ways of creating a Github repo for your project is creating an empty repository on Github, and adding it's remote link to your local repo, then pushing the local changes to the the repo.
-This process takes a few steps as is usually stated on Github after creating the project. This script simplified the process. All you have to do is pass the remote link as argument to the command. 
+This process takes a few steps as is usually stated on Github after creating the project. This script simplifies the process. All you have to do is pass the remote link as argument to the command. 
 ```sh
 # Add remote link and push committed files and directorries
 $ rl remote-repository-link
+# NB: Ensure that the files are already committed before you run this command
 ```
 
 ### [st (Status)](./bin/st)
@@ -91,4 +92,4 @@ These scripts are used by the main scripts.
 -   [errlog](./bin/errlog): Output a formatted error message
 
 # Contributing
-Let's work together on this. Contribute in anyway you can. 
+Let's work together on this. Any form of contribution is welcome. 
