@@ -39,8 +39,8 @@ Using these scripts is quite simple.
 ## Scripts
 ### [Commit](./bin/commit)
 
-You don't have to use the '-m' flag with this script. All you have to do is pass the files (and/or directories) to be committed, separated by spaces, as arguments. You will be prompted to enter commit message. Thats all.
-![commit](./images/commit.png)
+You don't have to use the '-m' flag with this script. All you have to do is pass the files (and/or directories) to be committed, separated by spaces, as arguments. You will be prompted to enter commit message. The specified files will be staged, then committed.
+
 #### Examples
 ```sh
 # Say you just need to commit a single file:
@@ -53,11 +53,13 @@ $ commit directory1/ path-to/another-file
 $ commit .
 
 ```
+![commit](./images/commit.png)
+
 #### Edge Cases
 -   If you run command in a directory that isn't initialized yet, you will be prompted to initialize directory as a git repo. 
--   You will get an error if the file(s) passed do(es) not exist in the directory. If the files passed do not exist (maybe due to typos), you will be prompted to reenter file name(s).
+-   You will get an error if the file(s) passed do(es) not exist in the directory. But the command doesn't exit. You will be prompted to reenter file name(s).
 -   If you run the command with no argument passed, you will be prompted either to stage everything, or specify which files to commit.
--   The command also handles or tracks deleted files
+-   The command also handles or tracks deleted files (`git add -u`)
 
 ### [RL (Remote Link)](./bin/rl)
 One of the known ways of creating a Github repo for your project is creating an empty repository on Github, and adding it's remote link to your local repo, then pushing the local changes to the the repo.
