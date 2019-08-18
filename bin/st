@@ -23,9 +23,10 @@ status() {
 #==========================================================================================
 
 ### Check if current directory is a git repository
-if [[ $(fe ".git") == "true" ]];
-then
-    status;
+isInsideGitRepo="$(git rev-parse --is-inside-work-tree 2>/dev/null)"
+if [[ isInsideGitRepo ]];
+then 
+    git status;
 else
     errlog "This Directory is not a Git repository";
     exit 0;
